@@ -1,92 +1,161 @@
-# gateway
+
+by this  package we are able to connect to all Iranian bank and Paypal with one unique API.
+
+( This Package is now compatible with both **4.\* and 5.\* versions of Laravel** )
+
+Please inform us once you've encountered [bug](https://github.com/hosseinizadeh/gateway/issues) or [issue](https://github.com/hosseinizadeh/gateway/issues)  .
+
+Available Banks:
+ 1. MELLAT
+ 2. SADAD (MELLI)
+ 3. SAMAN
+ 4. PARSIAN
+ 5. PASARGAD
+ 6. ZARINPAL
+ 7. PAYPAL
+ 8. ASAN PARDAKHT (update from new documents)
+ 9. PAY.IR (to use : new \Payir())
+ 10. YEKPAY (**New**)
+----------
 
 
+**Installation**:
 
-## Getting started
+Run below statements on your terminal :
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+STEP 1 : 
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+    composer require hosseinizadeh/gateway
+    
+STEP 2 : Add `provider` and `facade` in config/app.php
 
-## Add your files
+    'providers' => [
+      ...
+      Hosseinizadeh\Gateway\GatewayServiceProvider::class, // <-- add this line at the end of provider array
+    ],
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
 
-```
-cd existing_repo
-git remote add origin https://gitlab.com/miladk313/gateway.git
-git branch -M main
-git push -uf origin main
-```
+    'aliases' => [
+      ...
+      'Gateway' => Hosseinizadeh\Gateway\Gateway::class, // <-- add this line at the end of aliases array
+    ]
 
-## Integrate with your tools
+Step 3:  
 
-- [ ] [Set up project integrations](https://gitlab.com/miladk313/gateway/-/settings/integrations)
+    php artisan vendor:publish --provider=Hosseinizadeh\Gateway\GatewayServiceProvider5
 
-## Collaborate with your team
+Step 4: 
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+    php artisan migrate
 
-## Test and Deploy
 
-Use the built-in continuous integration in GitLab.
+Configuration file is placed in config/gateway.php , open it and enter your banks credential:
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+You can make connection to bank by several way (Facade , Service container):
 
-***
+    try {
+       
+       $gateway = \Gateway::make(new \Mellat());
 
-# Editing this README
+       // $gateway->setCallback(url('/path/to/callback/route')); You can also change the callback
+       $gateway
+            ->price(1000)
+            // setShipmentPrice(10) // optional - just for paypal
+            // setProductName("My Product") // optional - just for paypal
+            ->ready();
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+       $refId =  $gateway->refId(); // شماره ارجاع بانک
+       $transID = $gateway->transactionId(); // شماره تراکنش
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+      // در اینجا
+      //  شماره تراکنش  بانک را با توجه به نوع ساختار دیتابیس تان 
+      //  در جداول مورد نیاز و بسته به نیاز سیستم تان
+      // ذخیره کنید .
+      
+       return $gateway->redirect();
+       
+    } catch (\Exception $e) {
+       
+       	echo $e->getMessage();
+    }
 
-## Name
-Choose a self-explaining name for your project.
+you can call the gateway by these ways :
+ 1. Gateway::make(new Mellat());
+ 1. Gateway::mellat()
+ 2. app('gateway')->make(new Mellat());
+ 3. app('gateway')->mellat();
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+Instead of MELLAT you can enter other banks Name as we introduced above .
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+In `price` method you should enter the price in IRR (RIAL) 
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+and in your callback :
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+    try { 
+       
+       $gateway = \Gateway::verify();
+       $trackingCode = $gateway->trackingCode();
+       $refId = $gateway->refId();
+       $cardNumber = $gateway->cardNumber();
+       
+        // تراکنش با موفقیت سمت بانک تایید گردید
+        // در این مرحله عملیات خرید کاربر را تکمیل میکنیم
+    
+    } catch (\Hosseinizadeh\Gateway\Exceptions\RetryException $e) {
+    
+        // تراکنش قبلا سمت بانک تاییده شده است و
+        // کاربر احتمالا صفحه را مجددا رفرش کرده است
+        // لذا تنها فاکتور خرید قبل را مجدد به کاربر نمایش میدهیم
+        
+        echo $e->getMessage() . "<br>";
+        
+    } catch (\Exception $e) {
+       
+        // نمایش خطای بانک
+        echo $e->getMessage();
+    }  
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+for yekpay you can use like this:
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+        try {
+            $gateway = Gateway::yekpay();
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+            /// can check country return true or false
+            $gateway->checkip(\request()->ip());
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+            /// can get exchange currency
+            $exchange = $gateway->exchange(978,364);
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+            $gateway->setCallback(route('bank.callback'));
+            $gateway->setFrom(364);
+            $gateway->setTo(364);
+            $gateway->setFname('ftest');
+            $gateway->setLname('ltest');
+            $gateway->setEmail('test@gmail.com');
+            $gateway->setMobile('+44123456789');
+            $gateway->setAddress('address');
+            $gateway->setPostalcode('9656789');
+            $gateway->setCountry('iran');
+            $gateway->setCity('tehran');
+            $gateway->setDescription('description');
+            $gateway->price(10000)->ready(10000);
+            $refId = $gateway->refId();
+            $transID = $gateway->transactionId();
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+            $payurl = $gateway->payurl();
 
-## License
-For open source projects, say how it is licensed.
+            return redirect($payurl);
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+        } catch (YekpayException $e) {
+            $message = $e->getMessage();
+            dd($message);
+        }
+    
+If you are intrested to developing this package you can help us by these ways :
+
+ 1. Improving documents.
+ 2. Reporting issue or bugs.
+ 3. Collaboration in writing codes and other banks modules.
+
+This package is extended from PoolPort  but we've changed some functionality and improved it .
