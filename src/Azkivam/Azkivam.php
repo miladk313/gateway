@@ -24,7 +24,7 @@ class Azkivam extends PortAbstract implements PortInterface
      *
      * @var string
      */
-    protected $serverUrl = 'https://api.azkiloan.com';
+    protected $serverUrl = 'https://api.azkivam.com';
 
     /**
      * Payment providerId
@@ -221,7 +221,7 @@ class Azkivam extends PortAbstract implements PortInterface
      */
     protected function curlPost($jsonData, $subUrl)
     {
-        $ch = curl_init($this->serverUrl . $subUrl);
+        $ch = curl_init($this->config->get('gateway.azkivam.apiPaymentUrl') . $subUrl);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
         curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
