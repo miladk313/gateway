@@ -2,6 +2,7 @@
 
 namespace Hosseinizadeh\Gateway;
 
+use Hosseinizadeh\Gateway\BityclePay\Bitycle;
 use Hosseinizadeh\Gateway\Parsian\Parsian;
 use Hosseinizadeh\Gateway\Paypal\Paypal;
 use Hosseinizadeh\Gateway\Sadad\Sadad;
@@ -73,6 +74,7 @@ class GatewayResolver
             Enum::PAYIR,
             Enum::YEKPAY,
             Enum::AZKIVAM,
+            Enum::BITYCLE,
         ];
 	}
 
@@ -166,7 +168,10 @@ class GatewayResolver
 			$name = Enum::PAYIR;
         } elseif ($port InstanceOf Yekpay) {
             $name = Enum::YEKPAY;
-		}  elseif(in_array(strtoupper($port),$this->getSupportedPorts())){
+		} elseif ($port InstanceOf Bitycle) {
+            $name = Enum::BITYCLE;
+        }
+        elseif(in_array(strtoupper($port),$this->getSupportedPorts())){
 			$port=ucfirst(strtolower($port));
 			$name=strtoupper($port);
 			$class=__NAMESPACE__.'\\'.$port.'\\'.$port;

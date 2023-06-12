@@ -3,6 +3,7 @@
 namespace Hosseinizadeh\Gateway\Asanpardakht;
 
 use Hosseinizadeh\Gateway\Enum;
+use Illuminate\Support\Facades\Log;
 use SoapClient;
 use Hosseinizadeh\Gateway\PortAbstract;
 use Hosseinizadeh\Gateway\PortInterface;
@@ -72,6 +73,7 @@ class Asanpardakht extends PortAbstract implements PortInterface
 
         $this->transactionId = $transaction->id;
         $resultCheckTransaction = $this->checkTransaction($transaction->id);
+        Log::log('info',['la'=>'$resultCheckTransaction','res'=>$resultCheckTransaction]);
         $resultVerify = [
             'status' => 471,
             'code' => 471
@@ -87,7 +89,7 @@ class Asanpardakht extends PortAbstract implements PortInterface
                 $this->trackingCode = $jsonDecode->payGateTranID;
 
                 $resultVerify = $this->userPayment($jsonDecode->payGateTranID);
-
+                Log::log('info',['la'=>'$resultVerify','res'=>$resultVerify]);
                 if ($resultVerify['status'] == 200) {
                     $this->transactionSucceed();
                     $this->newLog($resultVerify['status'], Enum::TRANSACTION_SUCCEED_TEXT);
