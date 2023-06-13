@@ -51,6 +51,8 @@ class Bitycle extends PortAbstract implements PortInterface
      */
     protected $pamentUrl;
 
+    protected $redirectUrl;
+
     //set ttl for redis
     const ACCESS_TOKEN_TTL = 4 * 60 * 60;
 
@@ -77,6 +79,16 @@ class Bitycle extends PortAbstract implements PortInterface
         return $this;
     }
 
+    /**
+     * @param string $currency
+     * @return $this
+     */
+    public function setCurrency(string $currency)
+    {
+        $this->currency = $currency;
+
+        return $this;
+    }
 
     /**
      * @param string $uid
@@ -103,6 +115,7 @@ class Bitycle extends PortAbstract implements PortInterface
      */
     public function verify($transaction)
     {
+        $this->client = new Client(['base_uri' => config('gateway.bitycle.url')]);
         parent::verify($transaction);
         return $this->verifyPayment();
         return $this;
@@ -111,7 +124,7 @@ class Bitycle extends PortAbstract implements PortInterface
     /**
      * Sets callback url
      * @param $url
-     * @return Azkivam
+     * @return Bitycle
      */
     function setCallback($url)
     {
@@ -133,6 +146,30 @@ class Bitycle extends PortAbstract implements PortInterface
         return $url;
     }
 
+    /**
+     * Sets redirect url
+     * @param $url
+     * @return Bitycle
+     */
+    function setRedirect($url)
+    {
+        $this->redirectUrl = $url;
+        return $this;
+    }
+
+    /**
+     * Gets redirect url
+     * @return string
+     */
+    function getRedirect()
+    {
+        if (!$this->redirectUrl)
+            $this->redirectUrl = $this->config->get('gateway.bitycle.redirect_url');
+
+        $url = $this->makeCallback($this->redirectUrl, ['orderId' => $this->providerId]);
+
+        return $url;
+    }
     /**
      * Gets Pament url
      * @return string
@@ -159,7 +196,7 @@ class Bitycle extends PortAbstract implements PortInterface
             'u_id' => $this->uid,
             'client_ref_no' => $orderId,
             'callback_url' => $this->getCallback(),
-            'redirect_url' => $this->getCallback(),
+            'redirect_url' => $this->getRedirect(),
         );
 
         try {
@@ -176,15 +213,51 @@ class Bitycle extends PortAbstract implements PortInterface
         } else {
             if ($result['code'] == 0) {
                 $this->refId = $result['data']["ref_no"];
-                $this->pamentUrl = 'https://pay.bitycle.com/assign/'.$this->network.'?ref_no='.$result['data']["ref_no"];
+                $this->pamentUrl = 'https://pay.bitycle.com/assign/'.$this->currency.'?ref_no='.$result['data']["ref_no"].'&amount='.$this->amount;
                 $this->transactionSetRefId();
                 return true;
             }
             $this->transactionFailed();
-            $this->newLog($result['rsCode'], BitycleException::$errors[$result['rsCode']]);
-            throw new BitycleException($result['rsCode']);
+            $this->newLog($result['code'], BitycleException::$errors[$result['code']]);
+            throw new BitycleException($result['code']);
         }
     }
+
+    /**
+     * Verify payment
+     * @authority == Token
+     * @throws BitycleException
+     */
+    protected function verifyPayment()
+    {
+        $fields = array(
+            'ref_no' => $this->refId,
+        );
+
+        try {
+            return $this->walletsVerifyDeposit($fields);
+            list($result, $err) = $this->walletsVerifyDeposit($fields);
+        } catch (\Exception $e) {
+            $this->transactionFailed();
+            $this->newLog('curl', $e->getMessage());
+            throw $e;
+        }
+        if ($err) {
+            $this->transactionFailed();
+            $this->newLog('curl', $err);
+            throw $err;
+        } else {
+            if ($result['code'] == 0) {
+                $this->transactionSucceed();
+                $this->newLog($result['code'], Enum::TRANSACTION_SUCCEED_TEXT);
+                return true;
+            }
+            $this->transactionFailed();
+            $this->newLog($result['code'], BitycleException::$errors[$result['code']]);
+            throw new BitycleException($result['code']);
+        }
+    }
+
 
     public function redirect()
     {
@@ -294,5 +367,10 @@ class Bitycle extends PortAbstract implements PortInterface
     public function walletsAssignWallet($network, $params)
     {
         return $this->sendRequest('wallets/assign_wallet/' . $network, 'POST', $params);
+    }
+
+    public function walletsVerifyDeposit($params)
+    {
+        return $this->sendRequest('wallets/verify_deposit', 'POST', $params);
     }
 }
