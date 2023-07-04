@@ -194,6 +194,8 @@ class Bitycle extends PortAbstract implements PortInterface
 
         $fields = array(
             'u_id' => $this->uid,
+            'amount' => $this->amount,
+            'currency' => 'USDT',
             'client_ref_no' => $orderId,
             'callback_url' => $this->getCallback(),
             'redirect_url' => $this->getRedirect(),
@@ -213,7 +215,7 @@ class Bitycle extends PortAbstract implements PortInterface
         } else {
             if ($result['code'] == 0) {
                 $this->refId = $result['data']["ref_no"];
-                $this->pamentUrl = 'https://pay.bitycle.com/assign/'.$this->currency.'?ref_no='.$result['data']["ref_no"].'&amount='.$this->amount;
+                $this->pamentUrl = 'https://tp.bitycle.com/assign/'.$result['data']["ref_no"];
                 $this->transactionSetRefId();
                 return true;
             }
@@ -366,11 +368,23 @@ class Bitycle extends PortAbstract implements PortInterface
 
     public function walletsAssignWallet($network, $params)
     {
-        return $this->sendRequest('wallets/assign_wallet/' . $network, 'POST', $params);
+        return $this->sendRequest('wallets/purchase/' . $network, 'POST', $params);
     }
 
     public function walletsVerifyDeposit($params)
     {
+        $this->client = new Client(['base_uri' => config('gateway.bitycle.url')]);
         return $this->sendRequest('wallets/verify_deposit', 'POST', $params);
+    }
+
+    public function walletsVerifyPurchase($params)
+    {
+        $this->client = new Client(['base_uri' => config('gateway.bitycle.url')]);
+        return $this->sendRequest('wallets/verify_purchase', 'POST', $params);
+    }
+
+    public function fakeCryptoTransaction($params) {
+        $this->client = new Client(['base_uri' => config('gateway.bitycle.url')]);
+        return $this->sendRequest('wallets/new_crypto_transaction', 'POST', $params);
     }
 }
