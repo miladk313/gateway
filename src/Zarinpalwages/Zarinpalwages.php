@@ -209,8 +209,8 @@ class Zarinpalwages extends PortAbstract implements PortInterface
             'metadata' => [
                 'mobile' => $this->mobileNumber ? $this->mobileNumber : $this->config->get('gateway.zarinpalwages.mobile', ''),
                 'email' => $this->email ? $this->email : $this->config->get('gateway.zarinpalwages.email', ''),
-            ],
-            'wages' => $array,
+            ]
+            //'wages' => $array,
         );
         $jsonData = json_encode($data);
 
