@@ -380,6 +380,7 @@ class Asanpardakht extends PortAbstract implements PortInterface
 
         } catch (\Exception $e) {
             //$err = curl_error($curl);
+            Log::log('error',['la'=>'Asanpardakht clientsPost', 'options'=>$options, 'url'=>$url, 'error'=>$e]);
             $response = $e->getCode();
         }
 

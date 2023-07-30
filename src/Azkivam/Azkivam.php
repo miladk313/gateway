@@ -4,9 +4,7 @@ namespace Hosseinizadeh\Gateway\Azkivam;
 
 use DateTime;
 use Hosseinizadeh\Gateway\Enum;
-use Hosseinizadeh\Gateway\Parsian\ParsianErrorException;
-use Hosseinizadeh\Gateway\Parsian\ParsianResult;
-use Hosseinizadeh\Gateway\Zarinpalwages\ZarinpalwagesException;
+use Illuminate\Support\Facades\Log;
 use SoapClient;
 use Hosseinizadeh\Gateway\PortAbstract;
 use Hosseinizadeh\Gateway\PortInterface;
@@ -221,22 +219,28 @@ class Azkivam extends PortAbstract implements PortInterface
      */
     protected function curlPost($jsonData, $subUrl)
     {
-        $ch = curl_init($this->serverUrl . $subUrl);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Accept: application/json',
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen($jsonData),
-            'Signature: ' . $this->makeSignature($subUrl,'POST'),
-            'MerchantId: ' . $this->config->get('gateway.azkivam.merchant-id')
-        ));
-        $result = curl_exec($ch);
-        $err = curl_error($ch);
-        $result = json_decode($result, true);
-        curl_close($ch);
-        return array($result, $err);
+        try {
+            $ch = curl_init($this->serverUrl . $subUrl);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                'Accept: application/json',
+                'Content-Type: application/json',
+                'Content-Length: ' . strlen($jsonData),
+                'Signature: ' . $this->makeSignature($subUrl,'POST'),
+                'MerchantId: ' . $this->config->get('gateway.azkivam.merchant-id')
+            ));
+            $result = curl_exec($ch);
+            $err = curl_error($ch);
+            $result = json_decode($result, true);
+            curl_close($ch);
+            return array($result, $err);
+        } catch (\Exception $e) {
+            //$err = curl_error($curl);
+            Log::log('error',['la'=>'Azkivam clientsPost', 'jsonData'=>$jsonData, 'url'=>$this->serverUrl . $subUrl, 'error'=>$e]);
+            $response = $e->getCode();
+        }
     }
 
     protected function makeSignature($sub_url, $request_method = 'POST')

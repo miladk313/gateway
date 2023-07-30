@@ -368,20 +368,27 @@ class Zarinpalwages extends PortAbstract implements PortInterface
      */
     protected function curlPostWages($jsonData, $url)
     {
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'ZarinPal Rest Api v1');
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen($jsonData)
-        ));
-        $result = curl_exec($ch);
-        $err = curl_error($ch);
-        $result = json_decode($result, true);
-        curl_close($ch);
-        return array($result, $err);
+        try {
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_USERAGENT, 'ZarinPal Rest Api v1');
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                'Content-Type: application/json',
+                'Content-Length: ' . strlen($jsonData)
+            ));
+            $result = curl_exec($ch);
+            $err = curl_error($ch);
+            $result = json_decode($result, true);
+            curl_close($ch);
+            return array($result, $err);
+        } catch (\Exception $e) {
+            //$err = curl_error($curl);
+            Log::log('error',['la'=>'Zarinpalwages clientsPost', 'jsonData'=>$jsonData, 'url'=>$url, 'error'=>$e]);
+            $response = $e->getCode();
+        }
+
     }
 
     /**

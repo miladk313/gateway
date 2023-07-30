@@ -5,9 +5,7 @@ namespace Hosseinizadeh\Gateway\Bitycle;
 use DateTime;
 use GuzzleHttp\Client;
 use Hosseinizadeh\Gateway\Enum;
-use Hosseinizadeh\Gateway\Parsian\ParsianErrorException;
-use Hosseinizadeh\Gateway\Parsian\ParsianResult;
-use Hosseinizadeh\Gateway\Zarinpalwages\ZarinpalwagesException;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use SoapClient;
 use Hosseinizadeh\Gateway\PortAbstract;
@@ -299,6 +297,7 @@ class Bitycle extends PortAbstract implements PortInterface
             $result = json_decode($response->getBody()->getContents(), true);
             return array($result, null);
         } catch (Exception $e) {
+            Log::log('error',['la'=>'Bitycle clientsPost', 'params'=>$params, 'url'=>$url, 'error'=>$e]);
             return array(null, $e->getMessage());
         }
     }
