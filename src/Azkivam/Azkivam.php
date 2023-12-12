@@ -22,7 +22,7 @@ class Azkivam extends PortAbstract implements PortInterface
      *
      * @var string
      */
-    protected $serverUrl = 'https://api.azkiloan.com';
+    protected $serverUrl = 'https://api.azkivam.com';
 
     /**
      * Payment providerId
