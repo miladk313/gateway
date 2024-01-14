@@ -142,16 +142,7 @@ class Zarinpalwages extends PortAbstract implements PortInterface
      */
     public function redirect()
     {
-        switch ($this->config->get('gateway.zarinpalwages.type')) {
-            case 'zarin-gate':
-                return \Redirect::to(str_replace('$Authority', $this->refId, $this->zarinGateUrl));
-                break;
-
-            case 'normal':
-            default:
-                return \Redirect::to($this->gateUrl . $this->refId);
-                break;
-        }
+        return \Redirect::to($this->jsonRequestWages . $this->refId);
     }
 
     /**
@@ -209,9 +200,14 @@ class Zarinpalwages extends PortAbstract implements PortInterface
             'metadata' => [
                 'mobile' => $this->mobileNumber ? $this->mobileNumber : $this->config->get('gateway.zarinpalwages.mobile', ''),
                 'email' => $this->email ? $this->email : $this->config->get('gateway.zarinpalwages.email', ''),
-            ]
-            //'wages' => $array,
+            ],
         );
+
+        $wages_status = $this->config->get('gateway.zarinpalwages.wages_status');
+        if ($wages_status){
+            $data['wages'] = $array;
+        }
+
         $jsonData = json_encode($data);
 
         try {
