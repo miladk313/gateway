@@ -213,7 +213,7 @@ class Bitycle extends PortAbstract implements PortInterface
         } else {
             if ($result['code'] == 0) {
                 $this->refId = $result['data']["ref_no"];
-                $this->pamentUrl = 'https://pay.bitycle.com/assign/'.$result['data']["ref_no"];
+                $this->pamentUrl = config('gateway.yekpay.sandbox') ? 'https://tp.bitycle.com/assign/'.$result['data']["ref_no"] : 'https://pay.bitycle.com/assign/'.$result['data']["ref_no"];
                 $this->transactionSetRefId();
                 return true;
             }
