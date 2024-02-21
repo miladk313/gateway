@@ -81,7 +81,7 @@ class Yekpay extends PortAbstract implements PortInterface
      */
     public function redirect()
     {
-        return \Redirect::to($this->gateUrl.$this->refId());
+        return \Redirect::to(config('gateway.yekpay.sandbox') ? 'https://api.yekpay.com/api/sandbox/payment/'.$this->refId() : $this->gateUrl.$this->refId());
     }
 
     /**
@@ -89,7 +89,7 @@ class Yekpay extends PortAbstract implements PortInterface
      */
     public function payurl()
     {
-        return $this->gateUrl.$this->refId();
+        return config('gateway.yekpay.sandbox') ? 'https://api.yekpay.com/api/sandbox/payment/'.$this->refId() : $this->gateUrl.$this->refId();
     }
 
     /**
@@ -224,7 +224,7 @@ class Yekpay extends PortAbstract implements PortInterface
 
         $ch = curl_init();
 
-        curl_setopt($ch, CURLOPT_URL, $this->requestUrl);
+        curl_setopt($ch, CURLOPT_URL, config('gateway.yekpay.sandbox') ? 'https://api.yekpay.com/api/sandbox/request' : $this->requestUrl);
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($fields));
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -278,7 +278,7 @@ class Yekpay extends PortAbstract implements PortInterface
             'authority'  => $this->refId(),
         ];
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->serverVerifyUrl);
+        curl_setopt($ch, CURLOPT_URL, config('gateway.yekpay.sandbox') ? 'https://api.yekpay.com/api/sandbox/verify' : $this->serverVerifyUrl);
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($fields));
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
