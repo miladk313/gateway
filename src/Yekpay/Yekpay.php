@@ -287,7 +287,6 @@ class Yekpay extends PortAbstract implements PortInterface
         curl_close($ch);
 
         if ($response['Code'] == 100) {
-            $this->trackingCode = $response['Tracking'];
             $this->transactionSucceed();
             $this->newLog(1, Enum::TRANSACTION_SUCCEED_TEXT);
             return true;
