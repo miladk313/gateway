@@ -331,6 +331,7 @@ class Bitycle extends PortAbstract implements PortInterface
                 // Save tokens to Redis with TTL of 5 hours
                 $this->saveToRedis('access_token', $login_result['data']['access_token'], $this::ACCESS_TOKEN_TTL);
                 $this->saveToRedis('refresh_token', $login_result['data']['refresh_token'], $this::REFRESH_TOKEN_TTL);
+                $accessToken = $login_result['data']['access_token'];
             } else {
                 // Refresh access_token using refresh_token
                 $refreshToken = $this->accountsRefreshToken(['refresh_token' => $refreshToken]);
