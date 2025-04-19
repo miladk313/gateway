@@ -10,6 +10,7 @@ use Hosseinizadeh\Gateway\Mellat\Mellat;
 use Hosseinizadeh\Gateway\Pasargad\Pasargad;
 use Hosseinizadeh\Gateway\Saman\Saman;
 use Hosseinizadeh\Gateway\Asanpardakht\Asanpardakht;
+use Hosseinizadeh\Gateway\SnappPay\SnappPay;
 use Hosseinizadeh\Gateway\Yekpay\Yekpay;
 use Hosseinizadeh\Gateway\Zarinpal\Zarinpal;
 use Hosseinizadeh\Gateway\Payir\Payir;
@@ -75,6 +76,7 @@ class GatewayResolver
             Enum::YEKPAY,
             Enum::AZKIVAM,
             Enum::BITYCLE,
+            Enum::SNAPPPAY,
         ];
 	}
 
@@ -116,7 +118,7 @@ class GatewayResolver
 	 */
 	public function verify()
 	{
-		if (!$this->request->has('transaction_id') && !$this->request->has('iN') && !$this->request->has('factor'))
+		if (!$this->request->has('transaction_id') && !$this->request->has('transactionId') && !$this->request->has('iN') && !$this->request->has('factor'))
 			throw new InvalidRequestException;
 		if ($this->request->has('transaction_id')) {
 			$id = $this->request->get('transaction_id');
@@ -170,6 +172,8 @@ class GatewayResolver
             $name = Enum::YEKPAY;
 		} elseif ($port InstanceOf Bitycle) {
             $name = Enum::BITYCLE;
+        }elseif ($port InstanceOf SnappPay) {
+            $name = Enum::SNAPPPAY;
         }
         elseif(in_array(strtoupper($port),$this->getSupportedPorts())){
 			$port=ucfirst(strtolower($port));
