@@ -19,6 +19,7 @@ class Enum
   	const YEKPAY = 'YEKPAY';
   	const AZKIVAM = 'AZKIVAM';
   	const BITYCLE = 'BITYCLE';
+    const SNAPPPAY = 'SNAPPPAY';
 
 	/**
 	 * Status code for status field in poolport_transactions table

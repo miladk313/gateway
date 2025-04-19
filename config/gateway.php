@@ -154,6 +154,18 @@ return [
         'description'   => 'description',
     ],
 
+    //--------------------------------
+    // SnappPay gateway
+    //--------------------------------
+    'snapp' => [
+        'base_url'      => 'https://fms-gateway-staging.apps.public.okd4.teh-1.snappcloud.io',
+        'callback-url'  => '/',
+        'client_id'     => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+        'client_secret' => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+        'username'      => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+        'password'      => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    ],
+
     //-------------------------------
     // Tables names
     //--------------------------------
