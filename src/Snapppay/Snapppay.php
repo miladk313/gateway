@@ -1,13 +1,13 @@
 <?php
 
-namespace Hosseinizadeh\Gateway\SnappPay;
+namespace Hosseinizadeh\Gateway\Snapppay;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Hosseinizadeh\Gateway\PortAbstract;
 use Hosseinizadeh\Gateway\PortInterface;
 
-class SnappPay extends PortAbstract implements PortInterface
+class Snapppay extends PortAbstract implements PortInterface
 {
     protected $baseUrl;
     protected $mobileNumber;
@@ -153,8 +153,8 @@ class SnappPay extends PortAbstract implements PortInterface
 
         if (!($result['successful'] ?? false)) {
             $this->transactionFailed();
-            $this->newLog($response['errorData']['errorCode'], SnappPayException::$errors[$response['errorData']['errorCode']]);
-            throw new SnappPayException($response['errorData']['errorCode']);
+            $this->newLog($response['errorData']['errorCode'], SnapppayException::$errors[$response['errorData']['errorCode']]);
+            throw new SnapppayException($response['errorData']['errorCode']);
         }
 
         $this->transactionSucceed();

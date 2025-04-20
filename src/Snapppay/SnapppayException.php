@@ -1,10 +1,10 @@
 <?php
 
-namespace Hosseinizadeh\Gateway\SnappPay;
+namespace Hosseinizadeh\Gateway\Snapppay;
 
 use Hosseinizadeh\Gateway\Exceptions\BankException;
 
-class SnappPayException extends BankException
+class SnapppayException extends BankException
 {
     public static $errors = array(
         1000 => "در دریافت اطلاعات مشکلی پیش آمده است. لطفاً دوباره تلاش کنید.",
