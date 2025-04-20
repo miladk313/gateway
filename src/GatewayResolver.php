@@ -10,7 +10,7 @@ use Hosseinizadeh\Gateway\Mellat\Mellat;
 use Hosseinizadeh\Gateway\Pasargad\Pasargad;
 use Hosseinizadeh\Gateway\Saman\Saman;
 use Hosseinizadeh\Gateway\Asanpardakht\Asanpardakht;
-use Hosseinizadeh\Gateway\SnappPay\SnappPay;
+use Hosseinizadeh\Gateway\Snapppay\Snapppay;
 use Hosseinizadeh\Gateway\Yekpay\Yekpay;
 use Hosseinizadeh\Gateway\Zarinpal\Zarinpal;
 use Hosseinizadeh\Gateway\Payir\Payir;
@@ -172,7 +172,7 @@ class GatewayResolver
             $name = Enum::YEKPAY;
 		} elseif ($port InstanceOf Bitycle) {
             $name = Enum::BITYCLE;
-        }elseif ($port InstanceOf SnappPay) {
+        }elseif ($port InstanceOf Snapppay) {
             $name = Enum::SNAPPPAY;
         }
         elseif(in_array(strtoupper($port),$this->getSupportedPorts())){
