@@ -122,7 +122,9 @@ class GatewayResolver
 			throw new InvalidRequestException;
 		if ($this->request->has('transaction_id')) {
 			$id = $this->request->get('transaction_id');
-		} elseif ($this->request->has('factor')) {
+		} elseif ($this->request->has('transactionId')) {
+            $id = $this->request->get('transactionId');
+        } elseif ($this->request->has('factor')) {
             $id = $this->request->get('factor');
         } else {
 			$id = $this->request->get('iN');
