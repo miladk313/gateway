@@ -33,7 +33,8 @@ class Snapppay extends PortAbstract implements PortInterface
     public function verify($transaction)
     {
         parent::verify($transaction);
-        return $this->verifyPayment($transaction->ref_id);
+        $this->verifyPayment($transaction->ref_id);
+        return $this;
     }
 
     public function setCallback($url)
