@@ -158,9 +158,6 @@ class Snapppay extends PortAbstract implements PortInterface
             throw new SnapppayException($response['errorData']['errorCode']);
         }
 
-        $request = app('request');
-        $this->trackingCode = $request->input('RefNum') ?? $result['response']['transactionId'];
-        $this->cardNumber = $request->input('SecurePan');
         $this->transactionSucceed();
         return true;
     }
