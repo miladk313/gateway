@@ -11,6 +11,8 @@ class Snapppay extends PortAbstract implements PortInterface
 {
     protected $baseUrl;
     protected $mobileNumber;
+    protected $category = 'عمومی';
+    protected $itemName = 'پرداخت قسطی';
 
     public function __construct()
     {
@@ -51,6 +53,18 @@ class Snapppay extends PortAbstract implements PortInterface
     public function setMobileNumber($number)
     {
         $this->mobileNumber = $number;
+    }
+
+    public function setCategory($category)
+    {
+        $this->category = $category;
+        return $this;
+    }
+
+    public function setItemName($name)
+    {
+        $this->itemName = $name;
+        return $this;
     }
 
     protected function getAccessToken()
@@ -94,14 +108,14 @@ class Snapppay extends PortAbstract implements PortInterface
                     'cartId' => 1,
                     'cartItems' => [[
                         'amount' => $this->amount,
-                        'category' => 'general',
+                        'category' => $this->category,
                         'count' => 1,
                         'id' => 1,
-                        'name' => 'SnappPay Order',
-                        'commissionType' => 1
+                        'name' => $this->itemName,
+                        'commissionType' => 100
                     ]],
-                    'isShipmentIncluded' => false,
-                    'isTaxIncluded' => false,
+                    'isShipmentIncluded' => true,
+                    'isTaxIncluded' => true,
                     'shippingAmount' => 0,
                     'taxAmount' => 0,
                     'totalAmount' => $this->amount
