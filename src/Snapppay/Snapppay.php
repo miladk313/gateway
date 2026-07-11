@@ -237,4 +237,14 @@ class Snapppay extends PortAbstract implements PortInterface
 
         return $response->json();
     }
+
+    public function checkEligibility($amount)
+    {
+        $response = Http::withToken($this->getAccessToken())
+            ->get("{$this->baseUrl}/api/online/offer/v1/eligible", [
+                'amount' => $amount,
+            ]);
+
+        return $response->json();
+    }
 }
