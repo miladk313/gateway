@@ -13,6 +13,8 @@ class Snapppay extends PortAbstract implements PortInterface
     protected $mobileNumber;
     protected $category = 'عمومی';
     protected $itemName = 'پرداخت قسطی';
+    protected $taxAmount = 0;
+    protected $discountAmount = 0;
 
     public function __construct()
     {
@@ -67,6 +69,18 @@ class Snapppay extends PortAbstract implements PortInterface
         return $this;
     }
 
+    public function setTaxAmount($amount)
+    {
+        $this->taxAmount = $amount ?? 0;
+        return $this;
+    }
+
+    public function setDiscountAmount($amount)
+    {
+        $this->discountAmount = $amount ?? 0;
+        return $this;
+    }
+
     protected function getAccessToken()
     {
         return Cache::remember('snapp_token', 3000, function () {
@@ -117,11 +131,11 @@ class Snapppay extends PortAbstract implements PortInterface
                     'isShipmentIncluded' => true,
                     'isTaxIncluded' => true,
                     'shippingAmount' => 0,
-                    'taxAmount' => 0,
+                    'taxAmount' => $this->taxAmount,
                     'totalAmount' => $this->amount
                 ]
             ],
-            'discountAmount' => 0,
+            'discountAmount' => $this->discountAmount,
             'externalSourceAmount' => 0,
             'mobile' => '+98'.preg_replace('/^0/', '', $this->mobileNumber),
             'paymentMethodTypeDto' => 'INSTALLMENT',
