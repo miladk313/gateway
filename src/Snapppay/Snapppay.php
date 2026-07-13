@@ -115,13 +115,18 @@ class Snapppay extends PortAbstract implements PortInterface
         $transactionId = $this->transactionId();
         $this->transactionId = $transactionId;
 
+        // totalAmount = amount paid + discount (i.e. pre-discount total)
+        // cartItems.amount = totalAmount - tax
+        $totalAmount = $this->amount + $this->discountAmount;
+        $itemAmount = $totalAmount - $this->taxAmount;
+
         $payload = [
             'amount' => $this->amount,
             'cartList' => [
                 [
                     'cartId' => 1,
                     'cartItems' => [[
-                        'amount' => $this->amount,
+                        'amount' => $itemAmount,
                         'category' => $this->category,
                         'count' => 1,
                         'id' => 1,
@@ -132,7 +137,7 @@ class Snapppay extends PortAbstract implements PortInterface
                     'isTaxIncluded' => true,
                     'shippingAmount' => 0,
                     'taxAmount' => $this->taxAmount,
-                    'totalAmount' => $this->amount
+                    'totalAmount' => $totalAmount
                 ]
             ],
             'discountAmount' => $this->discountAmount,
